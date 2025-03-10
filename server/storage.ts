@@ -95,6 +95,18 @@ export class MemStorage implements IStorage {
     };
     const user = this.createUser(demoUser);
     
+    // Create account balance for the user
+    const accountBalance: AccountBalance = {
+      id: this.accountBalanceIdCounter++,
+      userId: user.id,
+      totalBalance: "5450.00",
+      monthlyIncome: "5250.00",
+      monthlyExpenses: "1750.00",
+      creditCardBills: "950.00",
+      updatedAt: new Date()
+    };
+    this.accountBalances.set(accountBalance.id, accountBalance);
+    
     // Create demo categories
     const categories = [
       { userId: user.id, name: "Moradia", color: "#2563eb" },
@@ -102,6 +114,7 @@ export class MemStorage implements IStorage {
       { userId: user.id, name: "Transporte", color: "#f59e0b" },
       { userId: user.id, name: "Saúde", color: "#ef4444" },
       { userId: user.id, name: "Lazer", color: "#dc2626" },
+      { userId: user.id, name: "Receita", color: "#8b5cf6" },
       { userId: user.id, name: "Outros", color: "#9ca3af" }
     ];
     

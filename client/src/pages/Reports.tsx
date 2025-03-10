@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { formatMonthYear } from "@/utils/dateHelpers";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { 
   Chart as ChartJS, 
   CategoryScale, 
@@ -19,7 +21,9 @@ import {
   ArcElement 
 } from 'chart.js';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
-import type { Transaction } from "@shared/schema";
+import type { Transaction, Category } from "@shared/schema";
+import { exportTransactionsToPDF, exportTransactionsToXML } from "@/utils/exportUtils";
+import { Download, FileText, FileCode } from "lucide-react";
 
 // Register ChartJS components
 ChartJS.register(
