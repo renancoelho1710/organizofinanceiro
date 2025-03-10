@@ -93,7 +93,11 @@ export class MemStorage implements IStorage {
       name: "João Silva",
       email: "joao@example.com"
     };
-    const user = this.createUser(demoUser);
+    
+    // User should be created synchronously for initializeDemoData
+    const id = this.userIdCounter++;
+    const user: User = { ...demoUser, id };
+    this.users.set(id, user);
     
     // Create account balance for the user
     const accountBalance: AccountBalance = {
@@ -126,8 +130,8 @@ export class MemStorage implements IStorage {
         userId: user.id,
         name: "Nubank",
         lastFourDigits: "4587",
-        limit: 5000,
-        currentBalance: 1240.56,
+        limit: "5000",
+        currentBalance: "1240.56",
         dueDate: 9,
         closingDate: 2,
         cardType: "mastercard",
@@ -137,8 +141,8 @@ export class MemStorage implements IStorage {
         userId: user.id,
         name: "Itaú Platinum",
         lastFourDigits: "7845",
-        limit: 8000,
-        currentBalance: 599.76,
+        limit: "8000",
+        currentBalance: "599.76",
         dueDate: 15,
         closingDate: 10,
         cardType: "visa",
@@ -273,10 +277,10 @@ export class MemStorage implements IStorage {
     // Create account balance
     this.updateAccountBalance(user.id, {
       userId: user.id,
-      totalBalance: 4628.90,
-      monthlyIncome: 5250.00,
-      monthlyExpenses: 3187.45,
-      creditCardBills: 1840.32
+      totalBalance: "4628.90",
+      monthlyIncome: "5250.00",
+      monthlyExpenses: "3187.45",
+      creditCardBills: "1840.32"
     });
   }
   
