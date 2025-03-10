@@ -5,6 +5,13 @@ import { formatDate } from './dateHelpers';
 import { Transaction, Category } from '@shared/schema';
 import * as xmljs from 'xml-js';
 
+// Estendendo o tipo jsPDF para incluir o método autoTable
+declare module 'jspdf' {
+  interface jsPDF {
+    autoTable: (options: any) => jsPDF;
+  }
+}
+
 interface ExportOptions {
   title: string;
   fileName: string;
@@ -75,7 +82,7 @@ export function exportTransactionsToPDF(
   });
 
   // Add table
-  (doc as any).autoTable({
+  doc.autoTable({
     head: [tableHeaders.map(h => h.header)],
     body: tableData.map(row => [
       row.date,
@@ -114,7 +121,7 @@ export function exportTransactionsToPDF(
   const balance = totalIncome - totalExpense;
   
   // Add totals section
-  const finalY = (doc as any).lastAutoTable.finalY + 10;
+  const finalY = doc.lastAutoTable.finalY + 10;
   
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);

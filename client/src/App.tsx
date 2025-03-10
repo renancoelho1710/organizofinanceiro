@@ -7,6 +7,7 @@ import Dashboard from "@/pages/Dashboard";
 import Transactions from "@/pages/Transactions";
 import CreditCardPage from "@/pages/CreditCardPage";
 import Reports from "@/pages/Reports";
+import Goals from "@/pages/Goals";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { useState, useEffect } from "react";
@@ -58,14 +59,7 @@ function App() {
             <Route path="/transactions" component={Transactions} />
             <Route path="/cards" component={CreditCardPage} />
             <Route path="/reports" component={Reports} />
-            <Route path="/goals">
-              <div className="container mx-auto p-6">
-                <h1 className="text-2xl font-bold mb-6">Metas de Economia</h1>
-                <div className="text-center py-10 text-gray-500">
-                  Funcionalidade em desenvolvimento...
-                </div>
-              </div>
-            </Route>
+            <Route path="/goals" component={Goals} />
             <Route component={NotFound} />
           </Switch>
         </main>
