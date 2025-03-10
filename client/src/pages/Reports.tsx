@@ -85,6 +85,19 @@ function groupTransactionsByCategory(transactions: Transaction[], type: 'income'
   return grouped;
 }
 
+// Helper to get the period label
+function getPeriodLabel(period: string): string {
+  switch (period) {
+    case 'lastmonth': return 'Último mês';
+    case 'last3months': return 'Últimos 3 meses';
+    case 'last6months': return 'Últimos 6 meses';
+    case 'thisyear': return 'Este ano';
+    case 'lastyear': return 'Ano anterior';
+    case 'all': return 'Todo período';
+    default: return 'Período personalizado';
+  }
+}
+
 export default function Reports() {
   const [period, setPeriod] = useState("last6months");
   const [chartView, setChartView] = useState("line");
@@ -129,10 +142,10 @@ export default function Reports() {
   const categoryIncome = groupTransactionsByCategory(filteredTransactions, 'income');
   
   // Map category names to colors
-  const categoryColors = categories?.reduce((acc, category) => {
+  const categoryColors = categories ? categories.reduce((acc, category) => {
     acc[category.name] = category.color;
     return acc;
-  }, {} as Record<string, string>) || {};
+  }, {} as Record<string, string>) : {};
   
   // Monthly overview chart data
   const monthlyChartData = {
@@ -336,8 +349,45 @@ export default function Reports() {
         </p>
       </div>
       
-      {/* Period selector */}
-      <div className="flex justify-end px-4 sm:px-0 mb-6">
+      {/* Period selector and export buttons */}
+      <div className="flex justify-between px-4 sm:px-0 mb-6">
+        <div className="flex space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center space-x-1"
+            onClick={() => exportTransactionsToPDF(
+              filteredTransactions, 
+              categories || [],
+              {
+                title: 'Relatório de Transações',
+                fileName: `transacoes-${formatMonthYear(new Date())}`,
+                period: getPeriodLabel(period)
+              }
+            )}
+          >
+            <FileText className="h-4 w-4" />
+            <span>Exportar PDF</span>
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center space-x-1"
+            onClick={() => exportTransactionsToXML(
+              filteredTransactions,
+              {
+                title: 'Relatório de Transações',
+                fileName: `transacoes-${formatMonthYear(new Date())}`,
+                period: getPeriodLabel(period)
+              }
+            )}
+          >
+            <FileCode className="h-4 w-4" />
+            <span>Exportar XML</span>
+          </Button>
+        </div>
+        
         <Select value={period} onValueChange={setPeriod}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Selecionar período" />

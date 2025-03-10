@@ -223,7 +223,7 @@ export function exportTransactionsToXML(
   };
 
   // Convert to XML
-  const xml = convert.js2xml(xmlData, {
+  const xml = xmljs.js2xml(xmlData, {
     compact: true,
     spaces: 2
   });

@@ -460,10 +460,10 @@ export class MemStorage implements IStorage {
       balance = { 
         id, 
         userId,
-        totalBalance: 0,
-        monthlyIncome: 0,
-        monthlyExpenses: 0,
-        creditCardBills: 0,
+        totalBalance: "0",
+        monthlyIncome: "0",
+        monthlyExpenses: "0",
+        creditCardBills: "0",
         updatedAt: new Date()
       };
       this.accountBalances.set(id, balance);
@@ -500,9 +500,9 @@ export class MemStorage implements IStorage {
     }
     
     await this.updateAccountBalance(transaction.userId, {
-      totalBalance,
-      monthlyIncome,
-      monthlyExpenses
+      totalBalance: totalBalance.toString(),
+      monthlyIncome: monthlyIncome.toString(),
+      monthlyExpenses: monthlyExpenses.toString()
     });
   }
   
