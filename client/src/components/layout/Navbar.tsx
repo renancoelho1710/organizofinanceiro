@@ -1,14 +1,13 @@
 import { Link } from "wouter";
 import { useState, useEffect } from "react";
 import { FiSun, FiMoon, FiCloud } from "react-icons/fi";
-import { WiDaySunnyOvercast, WiDayCloudy } from "react-icons/wi";
+import { WiDaySunnyOvercast } from "react-icons/wi";
+import { getCurrentTimeOfDay, TimeOfDay } from "@/utils/timeOfDayUtils";
 
 type NavbarProps = {
   currentPath: string;
   onNewTransaction: () => void;
 };
-
-type TimeOfDay = 'morning' | 'afternoon' | 'night' | 'cloudy';
 
 export default function Navbar({ currentPath, onNewTransaction }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -16,23 +15,7 @@ export default function Navbar({ currentPath, onNewTransaction }: NavbarProps) {
   const [userName, setUserName] = useState("João");
   
   useEffect(() => {
-    // Determinar o período do dia com base na hora atual
-    const getCurrentTimeOfDay = (): TimeOfDay => {
-      const currentHour = new Date().getHours();
-      
-      // Dias de semana são "nublados" (para fins de demonstração - segunda-feira)
-      const isMonday = new Date().getDay() === 1;
-      if (isMonday) return 'cloudy';
-      
-      if (currentHour >= 5 && currentHour < 12) {
-        return 'morning';
-      } else if (currentHour >= 12 && currentHour < 18) {
-        return 'afternoon';
-      } else {
-        return 'night';
-      }
-    };
-    
+    // Obter o período do dia usando a função utilitária
     setTimeOfDay(getCurrentTimeOfDay());
     
     // Buscar nome do usuário (poderia vir de uma API)
@@ -51,21 +34,6 @@ export default function Navbar({ currentPath, onNewTransaction }: NavbarProps) {
     
     fetchUserData();
   }, []);
-  
-  const getTimeIcon = () => {
-    switch (timeOfDay) {
-      case 'morning':
-        return <FiSun className="text-yellow-500" />;
-      case 'afternoon':
-        return <WiDaySunnyOvercast className="text-orange-400" />;
-      case 'night':
-        return <FiMoon className="text-indigo-400" />;
-      case 'cloudy':
-        return <WiDayCloudy className="text-gray-400" />;
-      default:
-        return <FiSun className="text-yellow-500" />;
-    }
-  };
   
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -120,7 +88,10 @@ export default function Navbar({ currentPath, onNewTransaction }: NavbarProps) {
             <div className="ml-4 flex items-center text-sm font-medium text-gray-700">
               <div className="flex items-center space-x-1">
                 <span className="text-xl">
-                  {getTimeIcon()}
+                  {timeOfDay === 'morning' && <FiSun color="#f97316" size={22} />}
+                  {timeOfDay === 'afternoon' && <WiDaySunnyOvercast color="#eab308" size={22} />}
+                  {timeOfDay === 'night' && <FiMoon color="#6366f1" size={22} />}
+                  {timeOfDay === 'cloudy' && <FiCloud color="#64748b" size={22} />}
                 </span>
                 <span className="ml-1">Olá, {userName}</span>
               </div>
