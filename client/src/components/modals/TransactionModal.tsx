@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { insertTransactionSchema } from "@shared/schema";
+import { FiUpload, FiX, FiImage } from "react-icons/fi";
 
 // Extend the schema with frontend validations
 const formSchema = insertTransactionSchema.extend({
@@ -43,6 +44,8 @@ type TransactionModalProps = {
 
 export default function TransactionModal({ isOpen, onClose }: TransactionModalProps) {
   const [isPending, setIsPending] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -66,10 +69,11 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
       // Use the submit schema to transform the data
       const validatedData = submitSchema.parse(data);
       
-      // Add userId (this will be set on the server)
+      // Add userId (this will be set on the server) and receipt image if present
       const transaction = {
         ...validatedData,
         creditCardId: null, // Default to no credit card
+        receiptImage: previewImage // Include the base64 image if available
       };
       
       await apiRequest("POST", "/api/transactions", transaction);
@@ -85,11 +89,15 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
       
       // Close modal and reset form
       form.reset();
+      setPreviewImage(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Erro",
-        description: error.message || "Erro ao registrar transação",
+        description: error?.message || "Erro ao registrar transação",
         variant: "destructive",
       });
     } finally {
@@ -264,6 +272,58 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                 </FormItem>
               )}
             />
+            
+            {/* Upload de comprovante */}
+            <FormItem>
+              <FormLabel>Comprovante (opcional)</FormLabel>
+              <div className="flex flex-col gap-2">
+                {previewImage ? (
+                  <div className="relative border rounded-md overflow-hidden">
+                    <img 
+                      src={previewImage} 
+                      alt="Comprovante" 
+                      className="w-full h-auto max-h-[200px] object-contain"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPreviewImage(null);
+                        if (fileInputRef.current) {
+                          fileInputRef.current.value = '';
+                        }
+                      }}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full"
+                    >
+                      <FiX size={16} />
+                    </button>
+                  </div>
+                ) : (
+                  <div 
+                    className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <FiUpload className="mx-auto text-gray-400 mb-2" size={24}/>
+                    <p className="text-sm text-gray-500">Clique para fazer upload do comprovante</p>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (event) => {
+                        setPreviewImage(event.target?.result as string);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+              </div>
+            </FormItem>
             
             <DialogFooter>
               <Button
