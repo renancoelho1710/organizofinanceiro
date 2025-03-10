@@ -42,6 +42,12 @@ export interface IStorage {
   updateCreditCard(id: number, creditCard: Partial<InsertCreditCard>): Promise<CreditCard | undefined>;
   deleteCreditCard(id: number): Promise<boolean>;
   
+  // Savings Goals operations
+  getSavingsGoals(userId: number): Promise<SavingsGoal[]>;
+  createSavingsGoal(goal: InsertSavingsGoal): Promise<SavingsGoal>;
+  updateSavingsGoal(id: number, goal: Partial<InsertSavingsGoal>): Promise<SavingsGoal | undefined>;
+  deleteSavingsGoal(id: number): Promise<boolean>;
+  
   // Balance operations
   getAccountBalance(userId: number): Promise<AccountBalance | undefined>;
   updateAccountBalance(userId: number, balance: Partial<InsertAccountBalance>): Promise<AccountBalance | undefined>;

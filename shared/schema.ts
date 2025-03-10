@@ -30,6 +30,7 @@ export const transactions = pgTable("transactions", {
   paymentMethod: text("payment_method"),
   notes: text("notes"),
   creditCardId: integer("credit_card_id").references(() => creditCards.id),
+  receiptImage: text("receipt_image"), // URL or path to receipt image
 });
 
 export const insertTransactionSchema = createInsertSchema(transactions).omit({
@@ -94,6 +95,27 @@ export const accountBalances = pgTable("account_balances", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Savings Goals
+export const savingsGoals = pgTable("savings_goals", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  name: text("name").notNull(),
+  targetAmount: numeric("target_amount", { precision: 10, scale: 2 }).notNull(),
+  currentAmount: numeric("current_amount", { precision: 10, scale: 2 }).default("0").notNull(),
+  deadline: date("deadline"),
+  category: text("category"),
+  color: text("color").notNull().default("#8b5cf6"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertSavingsGoalSchema = createInsertSchema(savingsGoals).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertAccountBalanceSchema = createInsertSchema(accountBalances).omit({
   id: true,
   updatedAt: true,
@@ -114,6 +136,9 @@ export type InsertBill = z.infer<typeof insertBillSchema>;
 
 export type CreditCard = typeof creditCards.$inferSelect;
 export type InsertCreditCard = z.infer<typeof insertCreditCardSchema>;
+
+export type SavingsGoal = typeof savingsGoals.$inferSelect;
+export type InsertSavingsGoal = z.infer<typeof insertSavingsGoalSchema>;
 
 export type AccountBalance = typeof accountBalances.$inferSelect;
 export type InsertAccountBalance = z.infer<typeof insertAccountBalanceSchema>;
