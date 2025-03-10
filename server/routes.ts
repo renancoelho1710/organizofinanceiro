@@ -67,7 +67,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     // Don't return the password
     const { password, ...userWithoutPassword } = user;
-    res.json(userWithoutPassword);
+    
+    // Adicionando dados extras para demonstração
+    // Em uma aplicação real, isso viria do banco de dados
+    const enhancedUser = {
+      ...userWithoutPassword,
+      username: "joaosilva",
+      phone: "+55 11 98765-4321",
+      notificationPreferences: {
+        whatsapp: true,
+        sms: false
+      }
+    };
+    
+    res.json(enhancedUser);
   });
   
   // =========== Dashboard Routes ===========

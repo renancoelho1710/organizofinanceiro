@@ -21,7 +21,7 @@ const notificationVariants = cva(
   }
 );
 
-const iconMap = {
+const iconMap: Record<string, React.ComponentType<any>> = {
   default: FiInfo,
   success: FiCheckCircle,
   warning: FiAlertCircle,

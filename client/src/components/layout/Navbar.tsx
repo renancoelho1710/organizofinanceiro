@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { FiSun, FiMoon, FiCloud } from "react-icons/fi";
 import { WiDaySunnyOvercast } from "react-icons/wi";
 import { getCurrentTimeOfDay, TimeOfDay } from "@/utils/timeOfDayUtils";
+import ProfileMenu from "./ProfileMenu";
 
 type NavbarProps = {
   currentPath: string;
@@ -13,6 +14,16 @@ export default function Navbar({ currentPath, onNewTransaction }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('morning');
   const [userName, setUserName] = useState("João");
+  const [userData, setUserData] = useState<{
+    name: string;
+    email: string;
+    username: string;
+    phone?: string;
+    notificationPreferences?: {
+      whatsapp: boolean;
+      sms: boolean;
+    }
+  } | null>(null);
   
   useEffect(() => {
     // Obter o período do dia usando a função utilitária
@@ -22,9 +33,10 @@ export default function Navbar({ currentPath, onNewTransaction }: NavbarProps) {
     const fetchUserData = async () => {
       try {
         const response = await fetch('/api/user');
-        const userData = await response.json();
-        if (userData && userData.name) {
-          const firstName = userData.name.split(' ')[0];
+        const data = await response.json();
+        setUserData(data);
+        if (data && data.name) {
+          const firstName = data.name.split(' ')[0];
           setUserName(firstName);
         }
       } catch (error) {
@@ -98,12 +110,9 @@ export default function Navbar({ currentPath, onNewTransaction }: NavbarProps) {
             </div>
             
             <div className="ml-3 relative">
-              <button className="flex text-sm rounded-full focus:outline-none">
-                <span className="sr-only">Abrir menu de usuário</span>
-                <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                  <i className="fas fa-user text-gray-500"></i>
-                </div>
-              </button>
+              {userData && (
+                <ProfileMenu userData={userData} />
+              )}
             </div>
             
             <button

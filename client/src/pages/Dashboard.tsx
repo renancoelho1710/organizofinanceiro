@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FinancialSummary from "@/components/dashboard/FinancialSummary";
 import ExpenseChart from "@/components/dashboard/ExpenseChart";
 import UpcomingBills from "@/components/dashboard/UpcomingBills";
@@ -8,8 +8,15 @@ import RecentTransactions from "@/components/dashboard/RecentTransactions";
 import ImportExcel from "@/components/dashboard/ImportExcel";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FiSun, FiMoon, FiCloud } from "react-icons/fi";
+import { WiDaySunnyOvercast } from "react-icons/wi";
+import { getCurrentTimeOfDay, TimeOfDay } from "@/utils/timeOfDayUtils";
+import { NotificationBanner } from "@/components/ui/notification-banner";
 
 export default function Dashboard() {
+  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('morning');
+  const [showNotification, setShowNotification] = useState<boolean>(false);
+  
   const { data: dashboardData, isLoading, error } = useQuery({
     queryKey: ["/api/dashboard"],
   });
@@ -20,6 +27,13 @@ export default function Dashboard() {
   
   // Check if there are upcoming bills
   const hasUpcomingBills = dashboardData?.upcomingBills && dashboardData.upcomingBills.length > 0;
+  
+  // Get the current time of day
+  useEffect(() => {
+    setTimeOfDay(getCurrentTimeOfDay());
+    // Mostrar a faixa de notificação roxa para demonstrar a funcionalidade
+    setShowNotification(true);
+  }, []);
   
   if (isLoading || isUserLoading) {
     return (
@@ -63,9 +77,32 @@ export default function Dashboard() {
   
   return (
     <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      {/* Faixa de notificação roxa */}
+      {showNotification && (
+        <div className="mb-6">
+          <NotificationBanner 
+            variant="default"
+            onClose={() => setShowNotification(false)}
+          >
+            <div className="flex items-center">
+              <span className="mr-2">📱</span>
+              <span>Ative as notificações por WhatsApp ou SMS para estar sempre atualizado sobre suas contas!</span>
+            </div>
+          </NotificationBanner>
+        </div>
+      )}
+      
       {/* Page Header */}
       <div className="px-4 sm:px-0 mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Olá, {userData?.name || 'Usuário'}!</h1>
+        <div className="flex items-center">
+          <h1 className="text-3xl font-bold text-gray-900">Olá, {userData?.name || 'Usuário'}!</h1>
+          <div className="ml-3 text-2xl">
+            {timeOfDay === 'morning' && <FiSun color="#f97316" />}
+            {timeOfDay === 'afternoon' && <WiDaySunnyOvercast color="#eab308" />}
+            {timeOfDay === 'night' && <FiMoon color="#6366f1" />}
+            {timeOfDay === 'cloudy' && <FiCloud color="#64748b" />}
+          </div>
+        </div>
         <p className="mt-1 text-sm text-gray-600">
           Resumo financeiro de <span className="font-medium">{dashboardData.currentMonth}</span>
         </p>
