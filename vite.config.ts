@@ -9,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
+  base: "/organizofinanceiro/", // ✅ Agora está certo!
   plugins: [
     react(),
     runtimeErrorOverlay(),
@@ -30,7 +31,7 @@ export default defineConfig({
   },
   root: __dirname,
   build: {
-    outDir: path.resolve(__dirname, "dist"),
+    outDir: "docs", // <-- MUDA ISSO aqui
     emptyOutDir: true,
   },
 });
