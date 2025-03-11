@@ -1,7 +1,7 @@
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "./components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/Dashboard";
 import Transactions from "@/pages/Transactions";
@@ -22,7 +22,8 @@ function App() {
     variant: "default" | "success" | "warning" | "error" | "info";
     visible: boolean;
   }>({
-    message: "Bem-vindo ao Organizo Financeiro! Gerencie suas finanças de forma simples e eficaz.",
+    message:
+      "Bem-vindo ao Organizo Financeiro! Gerencie suas finanças de forma simples e eficaz.",
     variant: "default",
     visible: true,
   });
@@ -31,9 +32,9 @@ function App() {
   useEffect(() => {
     if (notification.visible) {
       const timer = setTimeout(() => {
-        setNotification(prev => ({ ...prev, visible: false }));
+        setNotification((prev) => ({ ...prev, visible: false }));
       }, 8000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [notification.visible]);
@@ -42,16 +43,18 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen flex flex-col">
         {notification.visible && (
-          <NotificationBanner 
+          <NotificationBanner
             variant={notification.variant}
-            onClose={() => setNotification(prev => ({ ...prev, visible: false }))}
+            onClose={() =>
+              setNotification((prev) => ({ ...prev, visible: false }))
+            }
           >
             {notification.message}
           </NotificationBanner>
         )}
-        <Navbar 
-          currentPath={location} 
-          onNewTransaction={() => setIsTransactionModalOpen(true)} 
+        <Navbar
+          currentPath={location}
+          onNewTransaction={() => setIsTransactionModalOpen(true)}
         />
         <main className="flex-grow">
           <Switch>
@@ -66,9 +69,9 @@ function App() {
         <Footer />
 
         {/* Transaction Modal */}
-        <TransactionModal 
-          isOpen={isTransactionModalOpen} 
-          onClose={() => setIsTransactionModalOpen(false)} 
+        <TransactionModal
+          isOpen={isTransactionModalOpen}
+          onClose={() => setIsTransactionModalOpen(false)}
         />
       </div>
       <Toaster />
