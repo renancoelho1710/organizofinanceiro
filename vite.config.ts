@@ -9,20 +9,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
-  base: "/organizofinanceiro/", // ✅ Agora está certo!
-  plugins: [
-    react(),
-    runtimeErrorOverlay(),
-    themePlugin(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-        ]
-      : []),
-  ],
+  base: "/organizofinanceiro/", // ✅ ESSA LINHA É A CHAVE
+  plugins: [react(), runtimeErrorOverlay(), themePlugin()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "client", "src"),
@@ -31,7 +19,7 @@ export default defineConfig({
   },
   root: __dirname,
   build: {
-    outDir: "docs", // <-- MUDA ISSO aqui
+    outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
   },
 });

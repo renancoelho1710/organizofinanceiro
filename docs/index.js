@@ -783,17 +783,8 @@ var __filename = fileURLToPath(import.meta.url);
 var __dirname = dirname(__filename);
 var vite_config_default = defineConfig({
   base: "/organizofinanceiro/",
-  // ✅ Agora está certo!
-  plugins: [
-    react(),
-    runtimeErrorOverlay(),
-    themePlugin(),
-    ...process.env.NODE_ENV !== "production" && process.env.REPL_ID !== void 0 ? [
-      await import("@replit/vite-plugin-cartographer").then(
-        (m) => m.cartographer()
-      )
-    ] : []
-  ],
+  // ✅ ESSA LINHA É A CHAVE
+  plugins: [react(), runtimeErrorOverlay(), themePlugin()],
   resolve: {
     alias: {
       "@": path2.resolve(__dirname, "client", "src"),
@@ -802,8 +793,7 @@ var vite_config_default = defineConfig({
   },
   root: __dirname,
   build: {
-    outDir: "docs",
-    // <-- MUDA ISSO aqui
+    outDir: path2.resolve(__dirname, "dist"),
     emptyOutDir: true
   }
 });
